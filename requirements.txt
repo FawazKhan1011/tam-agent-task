@@ -1,0 +1,5 @@
+# Install the SDK for the provider you use:
+# anthropic
+# openai
+# Gemini uses the standard-library REST client; no SDK is required.
+# Add any other libraries you use (e.g. langgraph, rank_bm25, sentence-transformers, chromadb).

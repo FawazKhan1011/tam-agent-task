@@ -1,0 +1,35 @@
+{
+  "ticket_id": "TKT-160094",
+  "account_id": "ACC-2507",
+  "category": "needs_info",
+  "priority": "P3",
+  "route_to": "L1_support",
+  "escalate": false,
+  "notify_tam": false,
+  "duplicate_of": null,
+  "needs_clarification": true,
+  "kb_references": [
+    "KB-2914"
+  ],
+  "account_signals": [],
+  "customer_reply": "To help us investigate, please share the affected module, exact error text, which users or records are affected, and when the issue occurred.",
+  "internal_note": "Automated triage could not safely complete; human review is required.",
+  "confidence": 0.2,
+  "reasoning_trace": [
+    {
+      "step": 1,
+      "action": "llm_error",
+      "observation": "{\"reason\": \"model_call_failed:URLError\"}"
+    },
+    {
+      "step": 2,
+      "action": "fallback_lookup_account",
+      "observation": "Account resolved from supplied identifiers."
+    },
+    {
+      "step": 3,
+      "action": "conservative_fallback",
+      "observation": "Model did not produce a usable result (model_call_failed:URLError); used policy-safe fallback."
+    }
+  ]
+}

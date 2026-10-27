@@ -93,7 +93,7 @@ Shortlisted candidates are invited to a 15-minute code walkthrough.
 
 ## Local setup (Windows PowerShell)
 
-Run these commands from the repository root. The project currently requires pandas; provider SDKs and agent frameworks are optional and are not installed by the starter requirements.
+Run these commands from the repository root. The CSV loaders use Python's standard library; provider SDKs and agent frameworks are optional and are not installed by the starter requirements.
 
 ```powershell
 py -3.14 -m venv .venv
@@ -102,7 +102,7 @@ python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Edit `.env` locally to select a provider and model. Add a provider credential only if that provider requires one. Never put real credentials in `.env.example`, source files, commits, or shared logs; `.env` is ignored by Git. The example is configured for Ollama, which must already be installed and running with the selected model. This setup does not install Ollama or download a model. If PowerShell blocks activation, use a process-scoped execution-policy bypass for that activation only; do not change the machine-wide policy.
+Edit `.env` locally with `LLM_PROVIDER=gemini`, `LLM_MODEL=gemini-3.8-flash`, and a newly rotated `GEMINI_API_KEY` from Google AI Studio. The adapter uses Google's GenerateContent REST API and sends the key in the `x-goog-api-key` header. Never put real credentials in `.env.example`, source files, commits, or shared logs; `.env` is ignored by Git. Confirm model access and quota in AI Studio; no SDK or local model is required. If PowerShell blocks activation, use a process-scoped execution-policy bypass for that activation only; do not change the machine-wide policy.
 
 ## Validation and run commands
 
@@ -119,7 +119,7 @@ python run.py --set review
 python scripts/check_outputs.py
 ```
 
-The starter's `triage()` function is currently unimplemented. Therefore the run and output-check commands are documented targets, not verified passing checks. Do not treat generated outputs as present unless the commands have been run and checked.
+The runner uses only standard-library CSV loading for the supplied tabular data. A valid local Gemini API key and available quota are required for real triage. The previous output artifacts came from API failures and fallback handling, so rerun the review set after verifying one real model-driven ticket. Do not treat fallback outputs as successful model triage.
 
 ## Repository map
 
@@ -129,7 +129,7 @@ The starter's `triage()` function is currently unimplemented. Therefore the run 
 - `scripts/`: dataset integrity and output validation scripts.
 - `outputs/`: destination for per-ticket JSON results and the run log; generated results are not part of this setup phase.
 - `run.py`: assignment runner.
-- `requirements.txt`: declared Python dependencies.
+- `requirements.txt`: optional provider SDKs/frameworks selected for a deployment; the supplied loaders need no third-party package.
 - `.env.example`: non-secret provider configuration template.
 
 ## Development and Git safety
