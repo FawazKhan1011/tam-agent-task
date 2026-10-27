@@ -11,25 +11,37 @@
   "kb_references": [
     "KB-2914"
   ],
-  "account_signals": [],
+  "account_signals": [
+    "Renewal date 2026-12-04 (within 90 days)",
+    "Active users declined 7.25% over the last 3 months (does not meet >25% threshold)",
+    "Open escalations: 0"
+  ],
   "customer_reply": "To help us investigate, please share the affected module, exact error text, which users or records are affected, and when the issue occurred.",
-  "internal_note": "Automated triage could not safely complete; human review is required.",
-  "confidence": 0.2,
+  "internal_note": "Customer reports all scanned invoices failing OCR since 6 AM with error E-4102 affecting month-end close (1,200 invoices queued). Major function impaired with a business deadline risk within 72 hours, fitting P2 criteria under KB-2914. Account is within 90 days of renewal but active users only declined 7.25% (below the 25% threshold) and open escalations is 0, so account risk override does not apply. Routed to L2 Engineering.",
+  "confidence": 0.99,
   "reasoning_trace": [
     {
       "step": 1,
-      "action": "llm_error",
-      "observation": "{\"reason\": \"model_call_failed:URLError\"}"
+      "action": "lookup_account",
+      "observation": "{\"account\": {\"account_id\": \"ACC-3751\", \"arr_band\": \"1M+\", \"company_name\": \"Brightfield Manufacturing\", \"contract_start\": \"2024-01-03\", \"domain\": \"brightfield-manufacturing.example\", \"industry\": \"Manufacturing\", \"last_qbr_date\": \"2026-05-13\", \"modules_licensed\": \"Contracts;Platform;Supplier Management;eInvoice\", \"nps_last\": \"5\", \"open_escalations\": \"0\", \"region\": \"EMEA\", \"renewal_date\": \"2026-12-04\", \"sso_enabled_date\": \"\", \"tier\": \"Premium\"}, \"account_id\": \"ACC-3751\", \"resolution_method\": \"account_id\", \"resolved\": true}",
+      "input": "{\"account_id\": \"ACC-3751\"}"
     },
     {
       "step": 2,
-      "action": "fallback_lookup_account",
-      "observation": "Account resolved from supplied identifiers."
+      "action": "get_usage_trend",
+      "observation": "{\"account_id\": \"ACC-3751\", \"as_of_date\": \"2026-10-20\", \"decline_calculation\": {\"comparison_month\": \"2026-07\", \"decline_percent\": 7.2591, \"earlier_active_users\": 799, \"formula\": \"(earlier_active_users - latest_active_users) / earlier_active_users * 100\", \"interpretation\": \"positive means decline; negative means growth\", \"latest_active_users\": 741, \"latest_month\": \"2026-10\", \"status\": \"calculated\"}, \"monthly_active_users\": [{\"active_users\": 815, \"month\": \"2025-11\"}, {\"active_users\": 737, \"month\": \"2025-12\"}, {\"active_users\": 782, \"month\": \"2026-01\"}, {\"active_users\": 808, \"month\": \"2026-02\"}, {\"active_users\": 809, \"month\": \"2026-03\"}, {\"active_users\": 803, \"month\": \"2026-04\"}, {\"active_users\": 741, \"month\": \"2026-05\"}, {\"active_users\": 768, \"month\": \"2026-06\"}, {\"active_users\": 799, \"month\": \"2026-07\"}, {\"active_users\": 747, \"month\": \"2026-08\"}, {\"active_users\": 797, \"month\": \"2026-09\"}, {\"active_users\": 741, \"month\": \"2026-10\"}]}",
+      "input": "{\"account_id\": \"ACC-3751\"}"
     },
     {
       "step": 3,
-      "action": "conservative_fallback",
-      "observation": "Model did not produce a usable result (model_call_failed:URLError); used policy-safe fallback."
+      "action": "search_ticket_history",
+      "observation": "{\"account_id\": \"ACC-3751\", \"count\": 5, \"limit\": 5, \"records\": [{\"account_id\": \"ACC-3751\", \"channel\": \"portal\", \"created_at\": \"2026-08-24T14:11\", \"customer_priority\": \"P2\", \"description\": \"Getting E-4385 again. 3-way match times out. We tried logging out and back in. No change.\", \"error_code\": \"\", \"module\": \"eInvoice\", \"requester_domain\": \"brightfield-manufacturing.example\", \"status\": \"resolved\", \"subject\": \"Error E-4385 on 3-way match\", \"ticket_id\": \"TKT-161256\"}, {\"account_id\": \"\", \"channel\": \"email\", \"created_at\": \"2026-08-06T01:35\", \"customer_priority\": \"P4\", \"description\": \"Our category manager reports that the invoice OCR job fails to save. Error shown: E-4320. Impact: 31 users.\", \"error_code\": \"\", \"module\": \"eInvoice\", \"requester_domain\": \"brightfield-manufacturing.example\", \"status\": \"resolved\", \"subject\": \"Urgent: Invoice ocr job fails to save\", \"ticket_id\": \"TKT-174810\"}, {\"account_id\": \"ACC-3751\", \"channel\": \"phone\", \"created_at\": \"2026-07-21T12:35\", \"customer_priority\": \"\", \"description\": \"Need guidance: route invoices for exception approval. Is there a document?\", \"error_code\": \"\", \"module\": \"eInvoice\", \"requester_domain\": \"brightfield-manufacturing.example\", \"status\": \"closed\", \"subject\": \"Question: route invoices for exception approval\", \"ticket_id\": \"TKT-108702\"}, {\"account_id\": \"ACC-3751\", \"channel\": \"email\", \"created_at\": \"2026-02-20T02:35\", \"customer_priority\": \"P4\", \"description\": \"Need guidance: configure tax validation rules. Is there a document?\", \"error_code\": \"\", \"module\": \"eInvoice\", \"requester_domain\": \"brightfield-manufacturing.example\", \"status\": \"resolved\", \"subject\": \"Question: configure tax validation rules\", \"ticket_id\": \"TKT-124434\"}, {\"account_id\": \"ACC-3751\", \"channel\": \"chat\", \"created_at\": \"2025-12-15T20:39\", \"customer_priority\": ...",
+      "input": "{\"limit\": 5}"
+    },
+    {
+      "step": 4,
+      "action": "model_final_decision",
+      "observation": "{\"accepted\": true}"
     }
   ]
 }

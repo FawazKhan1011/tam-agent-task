@@ -1,25 +1,26 @@
 {
   "ticket_id": "TKT-135081",
   "account_id": "ACC-7533",
-  "category": "needs_info",
-  "priority": "P3",
-  "route_to": "L1_support",
-  "escalate": false,
+  "category": "security",
+  "priority": "P1",
+  "route_to": "security",
+  "escalate": true,
   "notify_tam": false,
   "duplicate_of": null,
-  "needs_clarification": true,
+  "needs_clarification": false,
   "kb_references": [
+    "KB-6401",
     "KB-2914"
   ],
   "account_signals": [],
-  "customer_reply": "To help us investigate, please share the affected module, exact error text, which users or records are affected, and when the issue occurred.",
+  "customer_reply": "Thank you for reporting this. Our Security team has been engaged and will review the report. We will follow up with you.",
   "internal_note": "Automated triage could not safely complete; human review is required.",
   "confidence": 0.2,
   "reasoning_trace": [
     {
       "step": 1,
       "action": "llm_error",
-      "observation": "{\"reason\": \"model_call_failed:URLError\"}"
+      "observation": "{\"reason\": \"Gemini quota or rate limit reached; check Google AI Studio usage and limits (HTTP 429).\"}"
     },
     {
       "step": 2,
@@ -29,7 +30,7 @@
     {
       "step": 3,
       "action": "conservative_fallback",
-      "observation": "Model did not produce a usable result (model_call_failed:URLError); used policy-safe fallback."
+      "observation": "Model did not produce a usable result (Gemini quota or rate limit reached; check Google AI Studio usage and limits (HTTP 429).); used policy-safe fallback."
     }
   ]
 }

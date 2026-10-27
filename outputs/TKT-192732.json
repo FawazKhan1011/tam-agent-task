@@ -11,25 +11,49 @@
   "kb_references": [
     "KB-2914"
   ],
-  "account_signals": [],
+  "account_signals": [
+    "Enterprise tier",
+    "ARR band 250k-500k",
+    "Renewal date 2026-12-05"
+  ],
   "customer_reply": "To help us investigate, please share the affected module, exact error text, which users or records are affected, and when the issue occurred.",
-  "internal_note": "Automated triage could not safely complete; human review is required.",
-  "confidence": 0.2,
+  "internal_note": "Customer reported spend dashboard not refreshing with error E-6105. Account resolved to Riverbend Health (ACC-6031). Priority set to P3 per KB-2914 as a function impaired with a workaround or single user/record affected / standard defect routing.",
+  "confidence": 0.95,
   "reasoning_trace": [
     {
       "step": 1,
-      "action": "llm_error",
-      "observation": "{\"reason\": \"model_call_failed:URLError\"}"
+      "action": "lookup_account",
+      "observation": "{\"account\": {\"account_id\": \"ACC-6031\", \"arr_band\": \"250k-500k\", \"company_name\": \"Riverbend Health\", \"contract_start\": \"2025-08-10\", \"domain\": \"riverbend-health.example\", \"industry\": \"Healthcare\", \"last_qbr_date\": \"2026-07-04\", \"modules_licensed\": \"Contracts;Platform;Sourcing;Spend Analytics;eInvoice\", \"nps_last\": \"9\", \"open_escalations\": \"0\", \"region\": \"APAC\", \"renewal_date\": \"2026-12-05\", \"sso_enabled_date\": \"2024-01-12\", \"tier\": \"Enterprise\"}, \"account_id\": \"ACC-6031\", \"resolution_method\": \"account_id\", \"resolved\": true}",
+      "input": "{\"account_id\": \"ACC-6031\"}"
     },
     {
       "step": 2,
-      "action": "fallback_lookup_account",
-      "observation": "Account resolved from supplied identifiers."
+      "action": "rejected_tool_call",
+      "observation": "{\"error\": \"Invalid tool name or arguments object; choose an allowlisted tool and valid arguments.\"}",
+      "input": "{\"tool\": \"search_ticket_history\"}"
     },
     {
       "step": 3,
-      "action": "conservative_fallback",
-      "observation": "Model did not produce a usable result (model_call_failed:URLError); used policy-safe fallback."
+      "action": "rejected_tool_call",
+      "observation": "{\"error\": \"Invalid tool name or arguments object; choose an allowlisted tool and valid arguments.\"}",
+      "input": "{\"tool\": \"search_ticket_history\"}"
+    },
+    {
+      "step": 4,
+      "action": "rejected_tool_call",
+      "observation": "{\"error\": \"Invalid tool name or arguments object; choose an allowlisted tool and valid arguments.\"}",
+      "input": "{\"tool\": \"search_kb\"}"
+    },
+    {
+      "step": 5,
+      "action": "model_final_decision",
+      "observation": "{\"accepted\": true}"
+    },
+    {
+      "step": 6,
+      "action": "get_usage_trend",
+      "observation": "{\"account_id\": \"ACC-6031\", \"as_of_date\": \"2026-10-20\", \"decline_calculation\": {\"comparison_month\": \"2026-07\", \"decline_percent\": 4.3103, \"earlier_active_users\": 580, \"formula\": \"(earlier_active_users - latest_active_users) / earlier_active_users * 100\", \"interpretation\": \"positive means decline; negative means growth\", \"latest_active_users\": 555, \"latest_month\": \"2026-10\", \"status\": \"calculated\"}, \"monthly_active_users\": [{\"active_users\": 580, \"month\": \"2025-11\"}, {\"active_users\": 576, \"month\": \"2025-12\"}, {\"active_users\": 529, \"month\": \"2026-01\"}, {\"active_users\": 594, \"month\": \"2026-02\"}, {\"active_users\": 552, \"month\": \"2026-03\"}, {\"active_users\": 540, \"month\": \"2026-04\"}, {\"active_users\": 551, \"month\": \"2026-05\"}, {\"active_users\": 541, \"month\": \"2026-06\"}, {\"active_users\": 580, \"month\": \"2026-07\"}, {\"active_users\": 566, \"month\": \"2026-08\"}, {\"active_users\": 561, \"month\": \"2026-09\"}, {\"active_users\": 555, \"month\": \"2026-10\"}]}",
+      "input": "{\"source\": \"account_risk_policy\"}"
     }
   ]
 }

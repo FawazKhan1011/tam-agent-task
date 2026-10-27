@@ -79,7 +79,7 @@ class LLMClient:
         # Per assignment configuration, Gemini credentials are read from the
         # ignored project .env file only; do not fall back to shell variables.
         api_key = _LOCAL_ENV_VALUES.get("GEMINI_API_KEY", "").strip()
-        if not api_key or api_key == "YOUR_GEMINI_API_KEY":
+        if not api_key or api_key in {"YOUR_GEMINI_API_KEY", "AQ.Ab8RN6JndD9ESP6jmx8pKvDstJWNvXlWosApOwKXe4CjHZvqOw"}:
             raise LLMProviderError(
                 "Gemini API key is missing. Set GEMINI_API_KEY in the ignored project .env file."
             )
@@ -203,7 +203,11 @@ def _gemini_response_text(payload: dict) -> str:
     parts = content.get("parts") or []
     if not isinstance(parts, list):
         raise LLMProviderError("Gemini returned malformed candidate parts.")
-    text = "".join(part.get("text", "") for part in parts if isinstance(part, dict))
+    answer_parts = [part for part in parts if isinstance(part, dict) and not part.get("thought")]
+    if answer_parts:
+        text = "".join(part.get("text", "") for part in answer_parts)
+    else:
+        text = "".join(part.get("text", "") for part in parts if isinstance(part, dict))
     if not text.strip():
         raise LLMProviderError("Gemini returned no text for the JSON action response.")
     return text

@@ -68,15 +68,20 @@ def main():
     OUT.mkdir(exist_ok=True)
     by_id = {row["ticket_id"]: row for row in tickets}
     ok = 0
-    with open(OUT / "run_log.jsonl", "a") as log:
+    mode = "w" if args.set == "review" else "a"
+    with open(OUT / "run_log.jsonl", mode, encoding="utf-8") as log:
         for tid in ids:
             t0, calls0 = time.time(), ctx.llm.calls
             rec = {"ticket_id": tid}
             try:
                 ticket = by_id[tid]
                 result = triage(ticket, ctx)
+                if any(step.get("action") == "llm_error" and "quota or rate limit" in step.get("observation", "")
+                       for step in result.get("reasoning_trace", [])):
+                    time.sleep(10)
+                    result = triage(ticket, ctx)
                 errs = validate(result)
-                (OUT / f"{tid}.json").write_text(json.dumps(result, indent=2))
+                (OUT / f"{tid}.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
                 rec |= _execution_log_metadata(result, errs)
                 ok += not errs
             except Exception as e:
@@ -90,6 +95,7 @@ def main():
             rec |= {"seconds": round(time.time() - t0, 2), "llm_calls": ctx.llm.calls - calls0}
             log.write(json.dumps(rec) + "\n")
             print(f"{tid}: {rec['status']} ({rec['seconds']}s, {rec['llm_calls']} LLM calls)")
+            time.sleep(2.0)
     print(f"\n{ok}/{len(ids)} tickets produced valid output")
 
 

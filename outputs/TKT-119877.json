@@ -18,18 +18,25 @@
   "reasoning_trace": [
     {
       "step": 1,
-      "action": "llm_error",
-      "observation": "{\"reason\": \"model_call_failed:URLError\"}"
+      "action": "lookup_account",
+      "observation": "{\"account\": {\"account_id\": \"ACC-2431\", \"arr_band\": \"1M+\", \"company_name\": \"Pinecrest Logistics\", \"contract_start\": \"2020-06-07\", \"domain\": \"pinecrest-logistics.example\", \"industry\": \"Logistics\", \"last_qbr_date\": \"2026-09-04\", \"modules_licensed\": \"Contracts;Platform;Spend Analytics;Supplier Management;eProcurement\", \"nps_last\": \"4\", \"open_escalations\": \"2\", \"region\": \"EMEA\", \"renewal_date\": \"2026-12-20\", \"sso_enabled_date\": \"2021-07-22\", \"tier\": \"Premium\"}, \"account_id\": \"ACC-2431\", \"resolution_method\": \"account_id\", \"resolved\": true}",
+      "input": "{\"account_id\": \"ACC-2431\"}"
     },
     {
       "step": 2,
-      "action": "fallback_lookup_account",
-      "observation": "Account resolved from supplied identifiers."
+      "action": "get_usage_trend",
+      "observation": "{\"account_id\": \"ACC-2431\", \"as_of_date\": \"2026-10-20\", \"decline_calculation\": {\"comparison_month\": \"2026-07\", \"decline_percent\": 49.0539, \"earlier_active_users\": 1374, \"formula\": \"(earlier_active_users - latest_active_users) / earlier_active_users * 100\", \"interpretation\": \"positive means decline; negative means growth\", \"latest_active_users\": 700, \"latest_month\": \"2026-10\", \"status\": \"calculated\"}, \"monthly_active_users\": [{\"active_users\": 1383, \"month\": \"2025-11\"}, {\"active_users\": 1317, \"month\": \"2025-12\"}, {\"active_users\": 1320, \"month\": \"2026-01\"}, {\"active_users\": 1345, \"month\": \"2026-02\"}, {\"active_users\": 1303, \"month\": \"2026-03\"}, {\"active_users\": 1388, \"month\": \"2026-04\"}, {\"active_users\": 1415, \"month\": \"2026-05\"}, {\"active_users\": 1420, \"month\": \"2026-06\"}, {\"active_users\": 1374, \"month\": \"2026-07\"}, {\"active_users\": 1054, \"month\": \"2026-08\"}, {\"active_users\": 839, \"month\": \"2026-09\"}, {\"active_users\": 700, \"month\": \"2026-10\"}]}",
+      "input": "{\"account_id\": \"ACC-2431\"}"
     },
     {
       "step": 3,
+      "action": "llm_error",
+      "observation": "{\"reason\": \"Gemini stopped generation (MALFORMED_FUNCTION_CALL).\"}"
+    },
+    {
+      "step": 4,
       "action": "conservative_fallback",
-      "observation": "Model did not produce a usable result (model_call_failed:URLError); used policy-safe fallback."
+      "observation": "Model did not produce a usable result (Gemini stopped generation (MALFORMED_FUNCTION_CALL).); used policy-safe fallback."
     }
   ]
 }

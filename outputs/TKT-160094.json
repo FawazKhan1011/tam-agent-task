@@ -11,25 +11,31 @@
   "kb_references": [
     "KB-2914"
   ],
-  "account_signals": [],
+  "account_signals": [
+    "Enterprise tier account",
+    "Renewal date 2027-03-19",
+    "0 open escalations"
+  ],
   "customer_reply": "To help us investigate, please share the affected module, exact error text, which users or records are affected, and when the issue occurred.",
-  "internal_note": "Automated triage could not safely complete; human review is required.",
-  "confidence": 0.2,
+  "internal_note": "Suppliers reporting E-3310 on Sourcing RFx. Event closes in 2 days (within 72 hours threshold). Major function impaired with no workaround. Classified as P2 per KB-2914 and routed to L2 Engineering.",
+  "confidence": 0.95,
   "reasoning_trace": [
     {
       "step": 1,
-      "action": "llm_error",
-      "observation": "{\"reason\": \"model_call_failed:URLError\"}"
+      "action": "lookup_account",
+      "observation": "{\"account\": {\"account_id\": \"ACC-2507\", \"arr_band\": \"250k-500k\", \"company_name\": \"Frostline Telecom\", \"contract_start\": \"2019-11-01\", \"domain\": \"frostline-telecom.example\", \"industry\": \"Telecom\", \"last_qbr_date\": \"2026-09-02\", \"modules_licensed\": \"Contracts;Integrations;Platform;Sourcing;Spend Analytics;eInvoice;eProcurement\", \"nps_last\": \"5\", \"open_escalations\": \"0\", \"region\": \"EMEA\", \"renewal_date\": \"2027-03-19\", \"sso_enabled_date\": \"2026-10-14\", \"tier\": \"Enterprise\"}, \"account_id\": \"ACC-2507\", \"resolution_method\": \"account_id\", \"resolved\": true}",
+      "input": "{\"account_id\": \"ACC-2507\"}"
     },
     {
       "step": 2,
-      "action": "fallback_lookup_account",
-      "observation": "Account resolved from supplied identifiers."
+      "action": "search_ticket_history",
+      "observation": "{\"account_id\": \"ACC-2507\", \"count\": 5, \"limit\": 5, \"records\": [{\"account_id\": \"ACC-2507\", \"channel\": \"portal\", \"created_at\": \"2026-09-17T01:43\", \"customer_priority\": \"P3\", \"description\": \"Hi team, when we try to use the catalog item it fails to save with E-1172. This started two days ago. Please advise.\", \"error_code\": \"E-1172\", \"module\": \"eProcurement\", \"requester_domain\": \"frostline-telecom.example\", \"status\": \"pending_customer\", \"subject\": \"Error E-1172 on Catalog item\", \"ticket_id\": \"TKT-147243\"}, {\"account_id\": \"\", \"channel\": \"portal\", \"created_at\": \"2026-08-24T21:51\", \"customer_priority\": \"P2\", \"description\": \"Getting E-2159 again. renewal alert shows incorrect values. We tried logging out and back in. No change.\", \"error_code\": \"\", \"module\": \"Contracts\", \"requester_domain\": \"frostline-telecom.example\", \"status\": \"resolved\", \"subject\": \"Error E-2159 on Renewal alert\", \"ticket_id\": \"TKT-102838\"}, {\"account_id\": \"\", \"channel\": \"email\", \"created_at\": \"2026-08-08T18:18\", \"customer_priority\": \"\", \"description\": \"Getting E-2216 again. clause library creates duplicate records. We tried logging out and back in. No change.\", \"error_code\": \"E-2216\", \"module\": \"Contracts\", \"requester_domain\": \"frostline-telecom.example\", \"status\": \"resolved\", \"subject\": \"Clause library issue - E-2216\", \"ticket_id\": \"TKT-166474\"}, {\"account_id\": \"ACC-2507\", \"channel\": \"chat\", \"created_at\": \"2026-07-29T05:39\", \"customer_priority\": \"P4\", \"description\": \"Hi team, when we try to use the spend cube refresh it times out with E-6182. This started two days ago. Please advise.\", \"error_code\": \"E-6182\", \"module\": \"Spend Analytics\", \"requester_domain\": \"frostline-telecom.example\", \"status\": \"closed\", \"subject\": \"Error E-6182 on Spend cube refresh\", \"ticket_id\": \"TKT-103178\"}, {\"account_id\": \"ACC-2507...",
+      "input": "{\"limit\": 5}"
     },
     {
       "step": 3,
-      "action": "conservative_fallback",
-      "observation": "Model did not produce a usable result (model_call_failed:URLError); used policy-safe fallback."
+      "action": "model_final_decision",
+      "observation": "{\"accepted\": true}"
     }
   ]
 }

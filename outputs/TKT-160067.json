@@ -18,18 +18,31 @@
   "reasoning_trace": [
     {
       "step": 1,
-      "action": "llm_error",
-      "observation": "{\"reason\": \"model_call_failed:URLError\"}"
+      "action": "lookup_account",
+      "observation": "{\"account\": {\"account_id\": \"ACC-8892\", \"arr_band\": \"500k-1M\", \"company_name\": \"Copperfield Brands\", \"contract_start\": \"2020-07-23\", \"domain\": \"copperfield-brands.example\", \"industry\": \"Consumer Goods\", \"last_qbr_date\": \"2026-06-22\", \"modules_licensed\": \"Platform;Sourcing;Spend Analytics;eInvoice;eProcurement\", \"nps_last\": \"8\", \"open_escalations\": \"0\", \"region\": \"EMEA\", \"renewal_date\": \"2027-05-08\", \"sso_enabled_date\": \"2023-02-01\", \"tier\": \"Enterprise\"}, \"account_id\": \"ACC-8892\", \"resolution_method\": \"account_id\", \"resolved\": true}",
+      "input": "{}"
     },
     {
       "step": 2,
-      "action": "fallback_lookup_account",
-      "observation": "Account resolved from supplied identifiers."
+      "action": "get_usage_trend",
+      "observation": "{\"account_id\": \"ACC-8892\", \"as_of_date\": \"2026-10-20\", \"decline_calculation\": {\"comparison_month\": \"2026-07\", \"decline_percent\": 1.3889, \"earlier_active_users\": 504, \"formula\": \"(earlier_active_users - latest_active_users) / earlier_active_users * 100\", \"interpretation\": \"positive means decline; negative means growth\", \"latest_active_users\": 497, \"latest_month\": \"2026-10\", \"status\": \"calculated\"}, \"monthly_active_users\": [{\"active_users\": 551, \"month\": \"2025-11\"}, {\"active_users\": 523, \"month\": \"2025-12\"}, {\"active_users\": 538, \"month\": \"2026-01\"}, {\"active_users\": 507, \"month\": \"2026-02\"}, {\"active_users\": 517, \"month\": \"2026-03\"}, {\"active_users\": 530, \"month\": \"2026-04\"}, {\"active_users\": 500, \"month\": \"2026-05\"}, {\"active_users\": 521, \"month\": \"2026-06\"}, {\"active_users\": 504, \"month\": \"2026-07\"}, {\"active_users\": 535, \"month\": \"2026-08\"}, {\"active_users\": 508, \"month\": \"2026-09\"}, {\"active_users\": 497, \"month\": \"2026-10\"}]}",
+      "input": "{}"
     },
     {
       "step": 3,
+      "action": "search_ticket_history",
+      "observation": "{\"account_id\": \"ACC-8892\", \"count\": 5, \"limit\": 5, \"records\": [{\"account_id\": \"ACC-8892\", \"channel\": \"portal\", \"created_at\": \"2026-07-10T03:31\", \"customer_priority\": \"P3\", \"description\": \"Getting E-1287 again. purchase order creates duplicate records. We tried logging out and back in. No change.\", \"error_code\": \"E-1287\", \"module\": \"eProcurement\", \"requester_domain\": \"copperfield-brands.example\", \"status\": \"closed\", \"subject\": \"Urgent: Purchase order creates duplicate records\", \"ticket_id\": \"TKT-103260\"}, {\"account_id\": \"ACC-8892\", \"channel\": \"phone\", \"created_at\": \"2026-07-05T07:35\", \"customer_priority\": \"P3\", \"description\": \"Hi team, when we try to use the budget check it shows incorrect values with E-1263. This started this morning. Please advise.\", \"error_code\": \"E-1263\", \"module\": \"eProcurement\", \"requester_domain\": \"copperfield-brands.example\", \"status\": \"closed\", \"subject\": \"Urgent: Budget check shows incorrect values\", \"ticket_id\": \"TKT-170112\"}, {\"account_id\": \"ACC-8892\", \"channel\": \"email\", \"created_at\": \"2026-06-06T01:48\", \"customer_priority\": \"P3\", \"description\": \"Need guidance: set up budget checks. Is there a document?\", \"error_code\": \"\", \"module\": \"eProcurement\", \"requester_domain\": \"copperfield-brands.example\", \"status\": \"resolved\", \"subject\": \"Question: set up budget checks\", \"ticket_id\": \"TKT-110723\"}, {\"account_id\": \"ACC-8892\", \"channel\": \"portal\", \"created_at\": \"2026-04-02T05:28\", \"customer_priority\": \"P3\", \"description\": \"Our AP manager reports that the approval workflow times out. Error shown: E-1115. Impact: 331 users.\", \"error_code\": \"E-1115\", \"module\": \"eProcurement\", \"requester_domain\": \"copperfield-brands.example\", \"status\": \"resolved\", \"subject\": \"Approval workflow issue - E-1115\", \"ticket_id\": \"TKT-193657\"}, {\"account_id\": \"ACC-8892\", \"cha...",
+      "input": "{\"limit\": 5}"
+    },
+    {
+      "step": 4,
+      "action": "llm_error",
+      "observation": "{\"reason\": \"Gemini stopped generation (MALFORMED_FUNCTION_CALL).\"}"
+    },
+    {
+      "step": 5,
       "action": "conservative_fallback",
-      "observation": "Model did not produce a usable result (model_call_failed:URLError); used policy-safe fallback."
+      "observation": "Model did not produce a usable result (Gemini stopped generation (MALFORMED_FUNCTION_CALL).); used policy-safe fallback."
     }
   ]
 }

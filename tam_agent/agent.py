@@ -383,20 +383,35 @@ def triage(ticket: dict, ctx: Context) -> dict:
         break
       repair_calls += 1
       messages.extend([
-        {"role": "assistant", "content": _clip_text(_text(raw), 1200)},
+        {"role": "assistant", "content": _text(raw)},
         {"role": "user", "content": "Your last response was not a valid JSON object. Retry once using exactly the documented JSON action protocol; do not add markdown."},
       ])
       continue
 
-    kind = response.get("type")
+    action_dict = response
+    if isinstance(action_dict, dict):
+      if isinstance(action_dict.get("tool_call"), dict):
+        action_dict = action_dict["tool_call"]
+      elif isinstance(action_dict.get("final"), dict):
+        action_dict = action_dict["final"]
+      elif isinstance(action_dict.get("answer"), dict) and "type" not in action_dict:
+        action_dict = {"type": "final", "answer": action_dict["answer"]}
+
+    kind = action_dict.get("type") if isinstance(action_dict, dict) else None
+    if not kind and isinstance(action_dict, dict):
+      if "tool" in action_dict and isinstance(action_dict.get("arguments"), dict):
+        kind = "tool_call"
+      elif isinstance(action_dict.get("answer"), dict) or "category" in action_dict:
+        kind = "final"
+
     if kind == "tool_call":
-      tool_name = response.get("tool")
-      arguments = response.get("arguments")
+      tool_name = action_dict.get("tool")
+      arguments = action_dict.get("arguments")
       if not isinstance(tool_name, str) or tool_name not in _TOOL_NAMES or not isinstance(arguments, dict):
         observation = {"error": "Invalid tool name or arguments object; choose an allowlisted tool and valid arguments."}
         record("rejected_tool_call", observation, {"tool": tool_name})
         messages.extend([
-          {"role": "assistant", "content": json.dumps(response, ensure_ascii=False)},
+          {"role": "assistant", "content": _text(raw)},
           {"role": "user", "content": json.dumps({"tool_observation": observation})},
         ])
         continue
@@ -416,21 +431,23 @@ def triage(ticket: dict, ctx: Context) -> dict:
         observation = {"error": f"Tool request rejected: {type(exc).__name__}. Check its documented arguments and prior lookup results."}
         record("rejected_tool_arguments", observation, {"tool": tool_name})
       messages.extend([
-        {"role": "assistant", "content": json.dumps(response, ensure_ascii=False)},
+        {"role": "assistant", "content": _text(raw)},
         {"role": "user", "content": json.dumps({"tool_observation": observation}, ensure_ascii=False)},
       ])
       continue
 
-    if kind == "final" and isinstance(response.get("answer"), dict):
-      final_answer = response["answer"]
-      stop_reason = "model_finished"
-      record("model_final_decision", {"accepted": True})
-      break
+    if kind == "final":
+      candidate_answer = action_dict.get("answer") if isinstance(action_dict.get("answer"), dict) else action_dict
+      if isinstance(candidate_answer, dict) and "category" in candidate_answer:
+        final_answer = candidate_answer
+        stop_reason = "model_finished"
+        record("model_final_decision", {"accepted": True})
+        break
 
     observation = {"error": "Expected type=tool_call or type=final with an answer object."}
     record("invalid_action", observation)
     messages.extend([
-      {"role": "assistant", "content": json.dumps(response, ensure_ascii=False)},
+      {"role": "assistant", "content": _text(raw)},
       {"role": "user", "content": json.dumps({"tool_observation": observation})},
     ])
 
@@ -549,9 +566,9 @@ def _dispatch_tool(name: str, arguments: dict, ticket: dict, ctx: Context,
                    resolved_account: str | None, seen_history: dict) -> dict:
   """Validate one model request, then call only an existing bounded Context tool."""
   allowed_args = {
-    "lookup_account": set(),
-    "get_usage_trend": set(),
-    "search_ticket_history": {"module", "error_code", "limit"},
+    "lookup_account": {"account_id", "requester_domain", "domain", "company_name"},
+    "get_usage_trend": {"account_id"},
+    "search_ticket_history": {"account_id", "module", "error_code", "limit"},
     "search_kb": {"query", "module", "error_code", "article_type", "limit"},
     "get_kb_article": {"article_id"},
   }
@@ -559,7 +576,12 @@ def _dispatch_tool(name: str, arguments: dict, ticket: dict, ctx: Context,
     raise ValueError("unknown tool or unsupported argument")
 
   if name == "lookup_account":
-    return ctx.lookup_account(ticket)
+    lookup_input = dict(ticket)
+    if arguments:
+      for k in ("account_id", "requester_domain", "domain"):
+        if k in arguments and isinstance(arguments[k], str) and arguments[k].strip():
+          lookup_input[k] = arguments[k].strip()
+    return ctx.lookup_account(lookup_input)
   if name in {"get_usage_trend", "search_ticket_history"} and not resolved_account:
     raise ValueError("resolve the account before requesting account-specific data")
   if name == "get_usage_trend":

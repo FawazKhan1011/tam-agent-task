@@ -18,18 +18,19 @@
   "reasoning_trace": [
     {
       "step": 1,
-      "action": "llm_error",
-      "observation": "{\"reason\": \"model_call_failed:URLError\"}"
+      "action": "lookup_account",
+      "observation": "{\"account\": {\"account_id\": \"ACC-3600\", \"arr_band\": \"<100k\", \"company_name\": \"Brightfield Energy\", \"contract_start\": \"2023-07-28\", \"domain\": \"brightfield-energy.example\", \"industry\": \"Energy\", \"last_qbr_date\": \"\", \"modules_licensed\": \"Integrations;Platform;Sourcing;eProcurement\", \"nps_last\": \"9\", \"open_escalations\": \"0\", \"region\": \"EMEA\", \"renewal_date\": \"2027-05-18\", \"sso_enabled_date\": \"2023-05-02\", \"tier\": \"Standard\"}, \"account_id\": \"ACC-3600\", \"resolution_method\": \"account_id\", \"resolved\": true}",
+      "input": "{\"account_id\": \"ACC-3600\"}"
     },
     {
       "step": 2,
-      "action": "fallback_lookup_account",
-      "observation": "Account resolved from supplied identifiers."
+      "action": "llm_error",
+      "observation": "{\"reason\": \"Gemini stopped generation (MALFORMED_FUNCTION_CALL).\"}"
     },
     {
       "step": 3,
       "action": "conservative_fallback",
-      "observation": "Model did not produce a usable result (model_call_failed:URLError); used policy-safe fallback."
+      "observation": "Model did not produce a usable result (Gemini stopped generation (MALFORMED_FUNCTION_CALL).); used policy-safe fallback."
     }
   ]
 }
